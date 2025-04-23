@@ -5,8 +5,10 @@ import re
 import subprocess
 import time
 import glob
+import argparse
 from typing import Dict, List, Any, Union, Optional, Tuple, Set
 
+VERSION = "1.0.0"
 
 try:
     import pyautogui
@@ -889,12 +891,24 @@ def run_ws_repl(debug=False) -> None:
                 import traceback
                 traceback.print_exc()
 
+def parse_arguments():
+    """Parse command line arguments using argparse."""
+    parser = argparse.ArgumentParser(
+        description="WS Language Interpreter - A simple programming language for Windows automation.",
+        epilog="Example: python ws.py script.ws --debug"
+    )
+    
+    parser.add_argument("script", nargs="?", help="Path to the WS script file to execute")
+    parser.add_argument("-v", "--version", action="version", version=f"WS Language Interpreter v{VERSION}",
+                        help="Show version information and exit")
+    parser.add_argument("-d", "--debug", action="store_true", help="Enable debug mode")
+    
+    return parser.parse_args()
+
 if __name__ == "__main__":
-    debug_mode = "--debug" in sys.argv
-    if debug_mode:
-        sys.argv.remove("--debug")
-        
-    if len(sys.argv) > 1:
-        run_ws_file(sys.argv[1], debug=debug_mode)
+    args = parse_arguments()
+    
+    if args.script:
+        run_ws_file(args.script, debug=args.debug)
     else:
-        run_ws_repl(debug=debug_mode) 
+        run_ws_repl(debug=args.debug) 
